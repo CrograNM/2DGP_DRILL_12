@@ -139,8 +139,10 @@ class Zombie:
 
         c1 = Condition('소년이 근처에 있는가?', self.is_boy_nearby, 7)
         c2 = Condition('소년과 공의 개수 비교', self.check_ball_count)
+        root = choose_move_or_away = Sequence('소년을 쫓을지, 도망 칠지 결정', c1, c2)
 
         a4 = Action('소년한테 접근', self.move_to_boy)
+        # a5 = Action('소년에게 벗어나기', self.away_from_boy)
         root = chase_boy = Sequence('소년을 추적', c1, a4)
         root = chase_or_flee = Selector('추적 또는 배회', chase_boy, wander)
 
