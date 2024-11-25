@@ -117,6 +117,16 @@ class Zombie:
         else:
             return BehaviorTree.RUNNING
 
+    def away_from_boy(self, r=0.5):
+        self.state = 'Walk'
+        dx = play_mode.boy.x - self.x
+        dy = play_mode.boy.y - self.y 
+        self.move_slightly_to(self.x - dx, self.y - dy) #소년과 정반대 방향으로 이동
+        if self.distance_less_than(self.x - dx, self.y - dy, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+
 
     def get_patrol_location(self):
         self.tx, self.ty = self.patrol_locations[self.loc_no]
@@ -142,7 +152,7 @@ class Zombie:
         root = choose_move_or_away = Sequence('소년을 쫓을지, 도망 칠지 결정', c1, c2)
 
         a4 = Action('소년한테 접근', self.move_to_boy)
-        # a5 = Action('소년에게 벗어나기', self.away_from_boy)
+        a5 = Action('소년에게 벗어나기', self.away_from_boy)
         root = chase_boy = Sequence('소년을 추적', c1, a4)
         root = chase_or_flee = Selector('추적 또는 배회', chase_boy, wander)
 
