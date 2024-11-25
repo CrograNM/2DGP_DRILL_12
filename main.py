@@ -1,3 +1,4 @@
+# 2021184033 조성욱
 from pico2d import open_canvas, delay, close_canvas
 import game_framework
 
