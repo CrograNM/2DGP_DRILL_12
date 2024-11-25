@@ -117,22 +117,29 @@ class Zombie:
         else:
             return BehaviorTree.RUNNING
 
-    def away_from_boy(self, r=0.5):
+    def away_from_boy(self, r=7):
         self.state = 'Walk'
         dx = play_mode.boy.x - self.x
         dy = play_mode.boy.y - self.y
-        res_x = self.x - dx #(0~1280)
-        res_y = self.y - dy #(0~1024)
-        if res_x <= 0:
-            res_x = 0
-        if res_x >= 1280:
-            res_x = 1280
-        if res_y <= 0:
-            res_y = 0
-        if res_y >= 1024:
-            res_y = 1024
-        self.move_slightly_to(res_x, res_y) #소년과 정반대 방향으로 이동
+        distance = (dx ** 2 + dy ** 2) ** 0.5  # 소년과의 현재 거리 계산
+
+        # 거리가 r 이상이 되도록 이동 방향 설정
+        if distance < r:
+            scale = r / distance if distance != 0 else 1  # 거리 비율로 스케일 계산
+            dx *= scale
+            dy *= scale
+
+        res_x = self.x - dx  # 반대 방향으로 이동
+        res_y = self.y - dy
+
+        # 경계값 클램핑
+        res_x = max(0, min(1280, res_x))
+        res_y = max(0, min(1024, res_y))
+
+        self.move_slightly_to(res_x, res_y)  # 소년과 정반대 방향으로 이동
+
         if self.distance_less_than(res_x, res_y, self.x, self.y, r):
+            self.set_random_location()
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
