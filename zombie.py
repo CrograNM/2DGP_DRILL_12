@@ -147,15 +147,15 @@ class Zombie:
         a3 = Action('Set random location', self.set_random_location)
         root = wander = Sequence('Wander', a3, a2)
 
-        c1 = Condition('소년이 근처에 있는가?', self.is_boy_nearby, 7)
-        c2 = Condition('소년과 공의 개수 비교', self.check_ball_count)
-        root = choose_move_or_away = Sequence('소년을 쫓을지, 도망 칠지 결정', c1, c2)
+        c1 = Condition('소년과 공의 개수 비교', self.check_ball_count)
+        a4 = Action('소년 위치로 이동', self.move_to_boy)
+        root = chase = Sequence('소년추적', c1, a4)
 
-        a4 = Action('소년한테 접근', self.move_to_boy)
-        a5 = Action('소년에게 벗어나기', self.away_from_boy)
-        root = chase_boy = Sequence('소년을 추적', c1, a4)
-        root = chase_or_flee = Selector('추적 또는 배회', chase_boy, wander)
+        a5 = Action('소년 반대 방향 이동', self.away_from_boy)
+        root = flee = Sequence('도망치기',  a5)
 
-        # a5 = Action('순찰 위치 가져오기', self.get_patrol_location)
-        # root = patrol = Sequence('순찰', a5, a2)
+        root = chase_or_flee = Selector('추적 or 도망', chase, flee)
+        c2 = Condition('소년이 근처에 있는가?', self.is_boy_nearby, 7)
+        root = chase_flee_wander = Selector('추적 or 도망 or 배회', c2, chase_or_flee, wander)
+
         self.bt = BehaviorTree(root)
