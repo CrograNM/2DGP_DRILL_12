@@ -120,13 +120,22 @@ class Zombie:
     def away_from_boy(self, r=0.5):
         self.state = 'Walk'
         dx = play_mode.boy.x - self.x
-        dy = play_mode.boy.y - self.y 
-        self.move_slightly_to(self.x - dx, self.y - dy) #소년과 정반대 방향으로 이동
-        if self.distance_less_than(self.x - dx, self.y - dy, self.x, self.y, r):
+        dy = play_mode.boy.y - self.y
+        res_x = self.x - dx #(0~1280)
+        res_y = self.y - dy #(0~1024)
+        if res_x <= 0:
+            res_x = 0
+        if res_x >= 1280:
+            res_x = 1280
+        if res_y <= 0:
+            res_y = 0
+        if res_y >= 1024:
+            res_y = 1024
+        self.move_slightly_to(res_x, res_y) #소년과 정반대 방향으로 이동
+        if self.distance_less_than(res_x, res_y, self.x, self.y, r):
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
-
 
     def get_patrol_location(self):
         self.tx, self.ty = self.patrol_locations[self.loc_no]
